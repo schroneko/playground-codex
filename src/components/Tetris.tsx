@@ -53,6 +53,7 @@ const Tetris: React.FC = () => {
   const [board, setBoard] = useState<Cell[][]>(createBoard);
   const [piece, setPiece] = useState<PieceState | null>(null);
   const [running, setRunning] = useState(false);
+  const [score, setScore] = useState(0);
   const loop = useRef<number>();
 
   const hasCollision = (brd: Cell[][], pc: PieceState): boolean => {
@@ -122,8 +123,11 @@ const Tetris: React.FC = () => {
           return moved;
         }
         const merged = merge(board, prev);
-        const { board: cleared } = clearLines(merged);
-        setBoard(cleared);
+        const { board: clearedBoard, cleared } = clearLines(merged);
+        setBoard(clearedBoard);
+        if (cleared) {
+          setScore(s => s + cleared);
+        }
         spawnPiece();
         return null;
       });
@@ -168,6 +172,7 @@ const Tetris: React.FC = () => {
     if (!running) {
       setBoard(createBoard());
       spawnPiece();
+      setScore(0);
       setRunning(true);
     }
   };
@@ -199,16 +204,19 @@ const Tetris: React.FC = () => {
 
   return (
     <div className="tetris">
-      {!running && (
-        <button className="start" onClick={startGame}>
-          Start
-        </button>
-      )}
+      <div className="header">
+        <h2 className="score">Score: {score}</h2>
+        {!running && (
+          <button className="start" onClick={startGame} aria-label="Start Game">
+            Start
+          </button>
+        )}
+      </div>
       <div
         className="board"
         style={{
-          gridTemplateRows: `repeat(${ROWS}, 20px)`,
-          gridTemplateColumns: `repeat(${COLS}, 20px)`
+          gridTemplateRows: `repeat(${ROWS}, 30px)`,
+          gridTemplateColumns: `repeat(${COLS}, 30px)`
         }}
       >
         {display.flat().map((cell, idx) => (
@@ -219,6 +227,9 @@ const Tetris: React.FC = () => {
           />
         ))}
       </div>
+      <p className="instructions">
+        Use the arrow keys to move and rotate pieces. Press space to drop.
+      </p>
     </div>
   );
 };
