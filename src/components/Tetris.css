@@ -1,0 +1,19 @@
+.tetris {
+  display: inline-block;
+}
+
+.board {
+  display: grid;
+  background: #444;
+  gap: 1px;
+}
+
+.cell {
+  width: 20px;
+  height: 20px;
+  background: #222;
+}
+
+.start {
+  margin-bottom: 1rem;
+}
